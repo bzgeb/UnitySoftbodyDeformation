@@ -3,7 +3,6 @@ Shader "Custom/SoftbodyDeformStandard"
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
-        _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
     }
@@ -14,41 +13,48 @@ Shader "Custom/SoftbodyDeformStandard"
 
         CGPROGRAM
         // Physically based Standard lighting model, and enable shadows on all light types
-        #pragma surface surf vertex:vert Standard fullforwardshadows addshadow
+        #pragma surface surf Standard vertex:vert fullforwardshadows addshadow
+
+        #include "SoftbodyDeformationCommon.cginc"
 
         #pragma target 4.5
 
-        #include "UnityCG.cginc"
-        #include "SoftbodyDeformationCommon.cginc"
-
-        sampler2D _MainTex;
-
         struct Input
         {
-            float2 uv_MainTex;
+            float3 worldPos;
         };
 
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
 
-        // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
-        // See https://docs.unity3d.com/Manual/GPUInstancing.html for more information about instancing.
-        // #pragma instancing_options assumeuniformscaling
-        UNITY_INSTANCING_BUFFER_START(Props)
-            // put more per-instance properties here
-        UNITY_INSTANCING_BUFFER_END(Props)
-
         void vert(inout appdata_full v, out Input data)
         {
+            UNITY_INITIALIZE_OUTPUT(Input, data);
+            
+            float4 vertexPositionWS = mul(unity_ObjectToWorld, v.vertex);
+            float3 manipulatedPositionWS = ApplyManipulator(vertexPositionWS, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+
+            float3 tangentWS = UnityObjectToWorldDir(v.tangent);
+            float3 manipulatedTangentWS = ApplyManipulator(vertexPositionWS + tangentWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+            
+            float3 binormal = cross(normalize(v.normal), normalize(v.tangent.xyz)) * v.tangent.w;
+            float3 binormalWS = UnityObjectToWorldDir(binormal);
+            float3 manipulatedBitangentWS = ApplyManipulator(vertexPositionWS + binormalWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+
+            float3 finalTangent = normalize(manipulatedTangentWS - manipulatedPositionWS);
+            float3 finalBitangent = normalize(manipulatedBitangentWS - manipulatedPositionWS);
+            float3 finalNormal = normalize(cross(finalBitangent, finalTangent));
+
+            v.vertex = mul(unity_WorldToObject, float4(manipulatedPositionWS, 1));
+            v.normal = UnityWorldToObjectDir(finalNormal);
+            v.tangent = float4(UnityWorldToObjectDir(finalTangent), v.tangent.w);
         }
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
+            fixed4 c = _Color;
             o.Albedo = c.rgb;
-            // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
             o.Alpha = c.a;
