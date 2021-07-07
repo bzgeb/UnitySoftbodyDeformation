@@ -2,6 +2,7 @@ Shader "Custom/SoftbodyDeformStandard"
 {
     Properties
     {
+        _Albedo ("Albedo", 2D) = "white" {}
         _Color ("Color", Color) = (1,1,1,1)
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
@@ -22,8 +23,10 @@ Shader "Custom/SoftbodyDeformStandard"
         struct Input
         {
             float3 worldPos;
+            float2 uv_Albedo;
         };
 
+        sampler2D _Albedo;
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
@@ -34,7 +37,9 @@ Shader "Custom/SoftbodyDeformStandard"
             
             float4 vertexPositionWS = mul(unity_ObjectToWorld, v.vertex);
             float3 manipulatedPositionWS = ApplyManipulator(vertexPositionWS, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+            v.vertex = mul(unity_WorldToObject, float4(manipulatedPositionWS, 1));
 
+            /*
             float3 tangentWS = UnityObjectToWorldDir(v.tangent);
             float3 manipulatedTangentWS = ApplyManipulator(vertexPositionWS + tangentWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
             
@@ -46,14 +51,14 @@ Shader "Custom/SoftbodyDeformStandard"
             float3 finalBitangent = normalize(manipulatedBitangentWS - manipulatedPositionWS);
             float3 finalNormal = normalize(cross(finalBitangent, finalTangent));
 
-            v.vertex = mul(unity_WorldToObject, float4(manipulatedPositionWS, 1));
             v.normal = UnityWorldToObjectDir(finalNormal);
             v.tangent = float4(UnityWorldToObjectDir(finalTangent), v.tangent.w);
+            */
         }
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            fixed4 c = _Color;
+            fixed4 c = tex2D(_Albedo, IN.uv_Albedo) * _Color;
             o.Albedo = c.rgb;
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
