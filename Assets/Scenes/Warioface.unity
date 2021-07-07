@@ -389,6 +389,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 963194227}
+  Hardness: 0.5
+  Radius: 0.8
 --- !u!1 &1026100464 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 207d6d237180e6b4584a3ce64a5de505, type: 3}

@@ -6,6 +6,8 @@ using UnityEngine;
 public class ManipulatorMouseControl : MonoBehaviour
 {
     public Camera Camera;
+    public float Hardness = 0.5f;
+    public float Radius = 0.5f;
 
     Manipulator _manipulator;
     GameObject _manipulatorAnchor;
@@ -36,8 +38,8 @@ public class ManipulatorMouseControl : MonoBehaviour
                     _manipulator.Anchor = _manipulatorAnchor.transform;
                     _manipulator.Handle = _manipulatorHandle.transform;
                     _manipulator.Renderer = renderer;
-                    _manipulator.Hardness = 0.5f;
-                    _manipulator.Radius = 0.5f;
+                    _manipulator.Hardness = Hardness;
+                    _manipulator.Radius = Radius;
 
                     _prevMousePosition = Input.mousePosition;
                     _dragging = true;
