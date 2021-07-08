@@ -44,11 +44,11 @@ Shader "Custom/SoftbodyDeformStandard"
 
             float3 binormal = cross(normalize(v.normal), normalize(v.tangent.xyz)) * v.tangent.w;
             float3 binormalWS = UnityObjectToWorldDir(binormal);
-            float3 manipulatedBitangentWS = ApplyManipulator(vertexPositionWS + binormalWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+            float3 manipulatedBinormalWS = ApplyManipulator(vertexPositionWS + binormalWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
 
             float3 finalTangent = normalize(manipulatedTangentWS - manipulatedPositionWS);
-            float3 finalBitangent = normalize(manipulatedBitangentWS - manipulatedPositionWS);
-            float3 finalNormal = normalize(cross(finalTangent, finalBitangent)) * v.tangent.w;
+            float3 finalBinormal = normalize(manipulatedBinormalWS - manipulatedPositionWS);
+            float3 finalNormal = normalize(cross(finalTangent, finalBinormal)) * v.tangent.w;
 
             v.normal = UnityWorldToObjectDir(finalNormal);
             v.tangent = float4(UnityWorldToObjectDir(finalTangent), v.tangent.w);
