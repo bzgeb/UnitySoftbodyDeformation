@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.42118892, g: 0.4510576, b: 0.47150046, a: 1}
+  m_IndirectSpecularColor: {r: 0.42118868, g: 0.45105714, b: 0.47150022, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -389,5 +389,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Camera: {fileID: 963194227}
-  Hardness: 0.5
-  Radius: 0.8
+  Hardness: 0.1
+  Radius: 1
