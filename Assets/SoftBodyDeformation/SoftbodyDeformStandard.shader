@@ -40,17 +40,15 @@ Shader "Custom/SoftbodyDeformStandard"
 
             float3 tangentWS = UnityObjectToWorldDir(v.tangent);
             float3 manipulatedTangentWS = ApplyManipulator(vertexPositionWS + tangentWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
+            float3 finalTangent = normalize(manipulatedTangentWS - manipulatedPositionWS);
+            v.tangent = float4(UnityWorldToObjectDir(finalTangent), v.tangent.w);
 
             float3 binormal = cross(normalize(v.normal), normalize(v.tangent.xyz)) * v.tangent.w;
             float3 binormalWS = UnityObjectToWorldDir(binormal);
             float3 manipulatedBinormalWS = ApplyManipulator(vertexPositionWS + binormalWS * 0.01, _TransformationMatrix, _AnchorPosition, _Radius, _Hardness);
-
-            float3 finalTangent = normalize(manipulatedTangentWS - manipulatedPositionWS);
             float3 finalBinormal = normalize(manipulatedBinormalWS - manipulatedPositionWS);
             float3 finalNormal = normalize(cross(finalTangent, finalBinormal)) * v.tangent.w;
-
             v.normal = UnityWorldToObjectDir(finalNormal);
-            v.tangent = float4(UnityWorldToObjectDir(finalTangent), v.tangent.w);
         }
 
         void surf (Input IN, inout SurfaceOutputStandard o)
