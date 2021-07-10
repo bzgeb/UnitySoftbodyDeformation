@@ -1,5 +1,5 @@
 # Unity Soft Body Deformation
-An example of mesh deformation in Unity. Read the accompanying blog post [here]().
+An example of mesh deformation in Unity. Read the accompanying blog post [here](https://bronsonzgeb.com/index.php/2021/07/10/mesh-deformation-in-unity/).
 
 ![Example](https://github.com/bzgeb/UnitySoftbodyDeformation/blob/main/Screenshots/Wario.png)
 
