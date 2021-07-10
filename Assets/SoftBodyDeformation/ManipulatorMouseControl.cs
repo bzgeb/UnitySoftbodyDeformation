@@ -3,8 +3,8 @@ using UnityEngine;
 public class ManipulatorMouseControl : MonoBehaviour
 {
     public Camera Camera;
-    public float Hardness = 0.5f;
-    public float Radius = 0.5f;
+    public float Radius = 1f;
+    [Range(0, 1)] public float Hardness = 0.1f;
 
     Manipulator _manipulator;
     GameObject _manipulatorAnchor;
@@ -22,8 +22,8 @@ public class ManipulatorMouseControl : MonoBehaviour
 
             if (Physics.Raycast(ray, out RaycastHit hit, 100f))
             {
-                var renderer = hit.collider.GetComponentInChildren<Renderer>();
-                if (renderer != null)
+                var hitRenderer = hit.collider.GetComponentInChildren<Renderer>();
+                if (hitRenderer != null)
                 {
                     _manipulator = gameObject.AddComponent<Manipulator>();
                     _manipulatorAnchor = new GameObject("MouseAnchor");
@@ -34,7 +34,7 @@ public class ManipulatorMouseControl : MonoBehaviour
 
                     _manipulator.Anchor = _manipulatorAnchor.transform;
                     _manipulator.Handle = _manipulatorHandle.transform;
-                    _manipulator.Renderer = renderer;
+                    _manipulator.Renderer = hitRenderer;
                     _manipulator.Hardness = Hardness;
                     _manipulator.Radius = Radius;
 
